@@ -43,11 +43,11 @@ async def new_send(
         if len(content) > 2000:
             for page in pagify(content):
                 async with self.typing():
-                    await _OG_FUNC(self, page, **kwargs)
+                    msg = await _OG_FUNC(self, page, **kwargs)
                     await asyncio.sleep(0.5)
-            return
+            return msg
     kwargs["content"] = content
-    await _OG_FUNC(self, **kwargs)
+    return await _OG_FUNC(self, **kwargs)
 
 
 class PagifyMessage(commands.Cog):
