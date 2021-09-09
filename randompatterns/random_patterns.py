@@ -2,18 +2,35 @@
 # Licensed under MIT
 
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import box, humanize_number as hn
+from redbot.core.utils.chat_formatting import box, humanize_number as hn, humanize_list as hl
 import random
 import discord
+from discord.utils import copy_doc
 
 from functools import partial
+
+@copy_doc(hl)
+def humanize_list(items, **kwargs):
+    items = [f"`{item}`" for item in items]
+    return hl(items, **kwargs)
 
 
 class RandomPatterns(commands.Cog):
     """Generate random patterns"""
 
+    __authors__ = ["Jojo#7791"]
+    __version__ = "1.0.0"
+
     def __init__(self, bot):
         self.bot = bot
+
+    def format_help_for_context(self, ctx):
+        plural = "" if len(self.__authors__) == 1 else "s"
+        return (
+            f"{super().format_help_for_context(ctx)}\n"
+            f"**Author{plural}:** {humanize_list(self.__authors__)}\n"
+            f"**Version:** {self.__version__}"
+        )
 
     @commands.command()
     async def randpattern(self, ctx: commands.Context, lines: int = 5):

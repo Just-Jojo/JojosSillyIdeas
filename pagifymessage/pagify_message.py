@@ -4,12 +4,17 @@
 import asyncio
 
 from redbot.core import commands, Config
-from redbot.core.utils.chat_formatting import pagify
+from redbot.core.utils.chat_formatting import pagify, humanize_list as hl, box
 import discord
 from discord.utils import copy_doc
 
 
-_OG_FUNC = discord.abc.Messageable.send
+_OG_FUNC = getattr(discord.abc.Messageable, "send")
+
+@copy_doc(hl)
+def humanize_list(items, **kwargs):
+    items = [f"`{item}`" for item in items]
+    return hl(items, **kwargs)
 
 
 @copy_doc(_OG_FUNC)
@@ -53,6 +58,9 @@ async def new_send(
 class PagifyMessage(commands.Cog):
     """Monkey Patch discord.py's send attr to use pagify if message content is over the limit"""
 
+    __authors__ = ["Jojo#7791"]
+    __version__ = "1.0.0"
+
     def __init__(self, bot):
         self.bot = bot
         self.config = Config.get_conf(self, 544974305445019651, True)
@@ -60,18 +68,26 @@ class PagifyMessage(commands.Cog):
         self._enabled: bool
         self.init_task = self.bot.loop.create_task(self.init())
 
-    def cog_unload(self):
+    def format_help_for_context(self, ctx: commands.Context):
+        plural = "" if len(self.__authors__) == 1 else "s"
+        return (
+            f"{super().format_help_for_context(ctx)}\n"
+            f"**Author{plural}:** {humanize_list()}\n"
+            f"**Version:** `{self.__version__}`"
+        )
+
+    def cog_unload(self) -> None:
         self.init_task.cancel()
         if self._enabled:
             setattr(discord.abc.Messageable, "send", _OG_FUNC)
 
-    async def init(self):
+    async def init(self) -> None:
         self._enabled = await self.config.enabled()
 
         if self._enabled:
             setattr(discord.abc.Messageable, "send", new_send)
 
-    async def cog_check(self, ctx: commands.Context):
+    async def cog_check(self, ctx: commands.Context) -> bool:
         return await self.bot.is_owner(ctx.author)
 
     @commands.group(aliases=["pm"])
@@ -81,12 +97,16 @@ class PagifyMessage(commands.Cog):
 
     @pagifymessage.command()
     async def enable(self, ctx: commands.Context):
+        """Enable pagifying messages"""
+
         await ctx.tick()
         self._enabled = True
         setattr(discord.abc.Messageable, "send", new_send)
 
     @pagifymessage.command()
     async def disable(self, ctx: commands.Context):
+        """Disable pagifying messages"""
+
         await ctx.tick()
         self._enabled = False
         setattr(discord.abc.Messageable, "send", _OG_FUNC)
