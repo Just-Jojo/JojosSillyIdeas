@@ -1,0 +1,17 @@
+{
+    "name": "typingfucker",
+    "short": "Typing fucker.",
+    "description": "Monke",
+    "end_user_data_statement": "This cog does not store end user data.",
+    "install_msg": "Thanks for fucking typing discord :D",
+    "author": [
+        "Jojo#7791"
+    ],
+    "required_cogs": {},
+    "requirements": [],
+    "tags": [],
+    "min_bot_version": "3.4.10",
+    "hidden": false,
+    "disabled": false,
+    "type": "COG"
+}
