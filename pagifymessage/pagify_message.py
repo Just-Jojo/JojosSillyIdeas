@@ -72,7 +72,7 @@ class PagifyMessage(commands.Cog):
         plural = "" if len(self.__authors__) == 1 else "s"
         return (
             f"{super().format_help_for_context(ctx)}\n"
-            f"**Author{plural}:** {humanize_list()}\n"
+            f"**Author{plural}:** {humanize_list(self.__authors__)}\n"
             f"**Version:** `{self.__version__}`"
         )
 
