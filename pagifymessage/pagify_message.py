@@ -114,3 +114,9 @@ class PagifyMessage(commands.Cog):
         self._enabled = False
         setattr(discord.abc.Messageable, "send", _OG_FUNC)
         await self.config.enabled.set(False)
+
+    async def red_delete_data_for_user(self, *args, **kwargs):
+        return
+
+    async def red_get_data_for_user(self, *args, **kwargs):
+        return {}

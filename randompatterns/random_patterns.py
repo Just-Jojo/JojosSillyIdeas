@@ -64,3 +64,9 @@ class RandomPatterns(commands.Cog):
             [field.append(random.choice(chars)) for _ in range(50)]
             outcome += "".join(field) + "\n"
         return outcome
+
+    async def red_delete_data_for_user(self, *args, **kwargs):
+        return
+
+    async def red_get_data_for_user(self, *args, **kwargs):
+        return {}

@@ -72,3 +72,9 @@ class CanadianSend(commands.Cog):
             func = send
 
         setattr(Messageable, "send", func)
+
+    async def red_delete_data_for_user(self, *args, **kwargs):
+        return
+
+    async def red_get_data_for_user(self, *args, **kwargs):
+        return {}
