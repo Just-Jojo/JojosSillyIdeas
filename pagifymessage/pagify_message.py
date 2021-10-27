@@ -4,12 +4,14 @@
 import asyncio
 
 from redbot.core import commands, Config
+from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import pagify, humanize_list as hl, box
 import discord
 from discord.utils import copy_doc
 
 
 _OG_FUNC = getattr(discord.abc.Messageable, "send")
+
 
 @copy_doc(hl)
 def humanize_list(items, **kwargs):
@@ -30,7 +32,7 @@ async def new_send(
     nonce=None,
     allowed_mentions=None,
     reference=None,
-    mention_author=None
+    mention_author=None,
 ):
     kwargs = {
         "tts": tts,
@@ -41,7 +43,7 @@ async def new_send(
         "nonce": nonce,
         "allowed_mentions": allowed_mentions,
         "reference": reference,
-        "mention_author": mention_author
+        "mention_author": mention_author,
     }
     if content:
         content = str(content)
@@ -61,12 +63,12 @@ class PagifyMessage(commands.Cog):
     __authors__ = ["Jojo#7791"]
     __version__ = "1.0.0"
 
-    def __init__(self, bot):
+    def __init__(self, bot: Red):
         self.bot = bot
         self.config = Config.get_conf(self, 544974305445019651, True)
         self.config.register_global(enabled=False)
-        self._enabled: bool
-        self.init_task = self.bot.loop.create_task(self.init())
+        self._enabled: bool = False
+        self.init_task: asyncio.Task = self.bot.loop.create_task(self.init())
 
     def format_help_for_context(self, ctx: commands.Context):
         plural = "" if len(self.__authors__) == 1 else "s"
@@ -102,6 +104,7 @@ class PagifyMessage(commands.Cog):
         await ctx.tick()
         self._enabled = True
         setattr(discord.abc.Messageable, "send", new_send)
+        await self.config.enabled.set(True)
 
     @pagifymessage.command()
     async def disable(self, ctx: commands.Context):
@@ -110,3 +113,4 @@ class PagifyMessage(commands.Cog):
         await ctx.tick()
         self._enabled = False
         setattr(discord.abc.Messageable, "send", _OG_FUNC)
+        await self.config.enabled.set(False)

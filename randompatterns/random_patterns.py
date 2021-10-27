@@ -2,12 +2,18 @@
 # Licensed under MIT
 
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import box, humanize_number as hn, humanize_list as hl
+from redbot.core.bot import Red
+from redbot.core.utils.chat_formatting import (
+    box,
+    humanize_number as hn,
+    humanize_list as hl,
+)
 import random
 import discord
 from discord.utils import copy_doc
 
 from functools import partial
+
 
 @copy_doc(hl)
 def humanize_list(items, **kwargs):
@@ -21,7 +27,7 @@ class RandomPatterns(commands.Cog):
     __authors__ = ["Jojo#7791"]
     __version__ = "1.0.0"
 
-    def __init__(self, bot):
+    def __init__(self, bot: Red):
         self.bot = bot
 
     def format_help_for_context(self, ctx):
@@ -36,7 +42,9 @@ class RandomPatterns(commands.Cog):
     async def randpattern(self, ctx: commands.Context, lines: int = 5):
         """Generate a random pattern"""
         if lines < 1:
-            return await ctx.maybe_send_embed(f"Silly you, you can't generate {hn(lines)} lines!")
+            return await ctx.maybe_send_embed(
+                f"Silly you, you can't generate {hn(lines)} lines!"
+            )
         async with ctx.typing():
             func = partial(self._gen_outcome, lines)
             outcome = await self.bot.loop.run_in_executor(None, func)
