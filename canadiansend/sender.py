@@ -2,6 +2,7 @@ import discord
 from discord.abc import Messageable
 from discord.utils import copy_doc
 from redbot.core import commands, Config
+from redbot.core.bot import Red
 
 import string
 
@@ -31,7 +32,7 @@ async def send(
 class CanadianSend(commands.Cog):
     """Canadianize your bot, eh?"""
 
-    def __init__(self, bot):
+    def __init__(self, bot: Red):
         self.bot = bot
         self.config = Config.get_conf(self, 544974305445019651, True)
         self.config.register_global(enabled=False)
