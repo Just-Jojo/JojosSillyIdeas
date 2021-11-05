@@ -1,6 +1,6 @@
 import discord
 
-from redbot.core import commands
+from redbot.core import commands, Config
 from redbot.core.bot import Red
 import logging
 
@@ -15,6 +15,8 @@ class AntiAdmin(commands.Cog):
 
     def __init__(self, bot: Red):
         self.bot = bot
+        self.config = Config.get_conf(self, 544974305445019651, True)
+        self.config.register_global(ignore_messages=True)
 
     async def red_delete_data_for_user(self, *args, **kwargs):
         return
@@ -30,24 +32,52 @@ class AntiAdmin(commands.Cog):
     async def antiadminversion(self, ctx: commands.Context):
         await ctx.maybe_send_embed(f"AntiAdmin, version {self.__version__}. Written by {self.__authors__}")
 
+    @commands.group()
+    @commands.is_owner()
+    async def antiadminset(self, ctx: commands.Context):
+        """Manage the settings for the anti admin cog"""
+
+    @antiadminset.command(name="ignore")
+    async def anti_admin_ignore(self, ctx: commands.Context, toggle: bool):
+        """Set whether the cog should ignore a server if it has administrator permissions"""
+        now_no_longer = "now" if toggle else "no longer"
+        await ctx.send(f"Guilds that I have adminstrator permissions in will {now_no_longer} be ignored.")
+
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild):
-        me: discord.Member = guild.me
-        if not me.guild_permissions.administrator:
+        if not guild.me.guild_permissions.administrator:
             return
+        await self._handle_guild(guild)
+
+    async def _handle_guild(self, guild: discord.Guild):
         message = "Please, don't give me admin permissions. What if my dev was evil and destroyed your server?"
         try:
             await guild.owner.send(message)
         except discord.HTTPException:
             try:
-                chan = [c for c in guild.channels if c.permissions_for(me).send_messages][0]
+                chan = [c for c in guild.channels if c.permissions_for(guild.me).send_messages][0]
             except IndexError:
                 ... # Fuck your guild then
             else:
+                message = f"{guild.owner.mention}, p{message[1:]}"
                 await chan.send(message)
+
+    @commands.Cog.listener()
+    async def on_guild_role_update(self, before: discord.Role, after: discord.Role):
+        if after.guild.id != 841484758483730453:
+            return
+        if not after.is_bot_managed() or after.guild.me not in after.members:
+            return
+        if not after.permissions.administrator:
+            return
+        await self._handle_guild(after.guild)
 
     async def bot_check(self, ctx: commands.Context):
         if not ctx.guild:
+            return True
+        if await self.bot.is_owner(ctx.author):
+            return True
+        if not await self.config.ignore_messages():
             return True
         return not ctx.me.guild_permissions.administrator
 
