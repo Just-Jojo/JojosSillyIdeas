@@ -48,7 +48,9 @@ class AntiAdmin(commands.Cog):
     async def anti_admin_view(self, ctx: commands.Context):
         """Show the guilds that I have administrator permissions in"""
         guilds = [g.name for g in self.bot.guilds if g.me.guild_permissions.administrator]
-        msg = f"Here are the guilds that I have adminstration permission in:\n{', '.join(guilds)}"
+        if not guilds:
+            return await ctx.send("There are no guilds that I have administration permissions in")
+        msg = f"Here are the guilds that I have administration permission in:\n{', '.join(guilds)}"
         await ctx.send_interactive(pagify(msg))
 
     @commands.Cog.listener()
