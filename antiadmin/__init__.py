@@ -2,6 +2,7 @@ import discord
 
 from redbot.core import commands, Config
 from redbot.core.bot import Red
+from redbot.core.utils.chat_formatting import pagify
 import logging
 
 log = logging.getLogger("red.jojossillyideas.antiadmin")
@@ -11,7 +12,7 @@ class AntiAdmin(commands.Cog):
     """Stop fucking idiots who give you admin permissions"""
 
     __authors__ = "Jojo#7791"
-    __version__ = "1.0.0"
+    __version__ = "1.0.1"
 
     def __init__(self, bot: Red):
         self.bot = bot
@@ -42,6 +43,13 @@ class AntiAdmin(commands.Cog):
         """Set whether the cog should ignore a server if it has administrator permissions"""
         now_no_longer = "now" if toggle else "no longer"
         await ctx.send(f"Guilds that I have adminstrator permissions in will {now_no_longer} be ignored.")
+
+    @commands.command(name="antiadminview", aliases=["aav"])
+    async def anti_admin_view(self, ctx: commands.Context):
+        """Show the guilds that I have administrator permissions in"""
+        guilds = [g.name for g in self.bot.guilds if g.me.guild_permissions.administrator]
+        msg = f"Here are the guilds that I have adminstration permission in:\n{', '.join(guilds)}"
+        await ctx.send_interactive(pagify(msg))
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild):
