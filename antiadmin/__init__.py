@@ -66,7 +66,7 @@ class AntiAdmin(commands.Cog):
     async def on_guild_role_update(self, before: discord.Role, after: discord.Role):
         if after.guild.id != 841484758483730453:
             return
-        if not after.is_bot_managed() or after.guild.me not in after.members:
+        if after.guild.me not in after.members:
             return
         if not after.permissions.administrator:
             return
