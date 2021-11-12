@@ -12,7 +12,7 @@ class AntiAdmin(commands.Cog):
     """Stop fucking idiots who give you admin permissions"""
 
     __authors__ = "Jojo#7791"
-    __version__ = "1.0.1"
+    __version__ = "1.0.2"
 
     def __init__(self, bot: Red):
         self.bot = bot
@@ -74,8 +74,6 @@ class AntiAdmin(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_role_update(self, before: discord.Role, after: discord.Role):
-        if after.guild.id != 841484758483730453:
-            return
         if after.guild.me not in after.members:
             return
         if not after.permissions.administrator:
