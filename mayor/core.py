@@ -90,6 +90,8 @@ class Mayor(commands.Cog):
         data = await self.config.votes()
         if not data:
             return await ctx.send("I'm sorry, no one has voted yet!")
+        elif not await self.config.open():
+            return await ctx.send("Voting is not open!")
 
         old_mayor = ctx.guild.get_member(await self.config.current_mayor())
         async with self.config.previous_mayors() as pm:
@@ -136,6 +138,8 @@ class Mayor(commands.Cog):
 
         for user in await self.config.all_users():
             await self.config.user_from_id(user).voted.clear()
+        await ctx.invoke(self.unlockvote)
+        await self.config.votes.clear()
 
     @commands.command()
     @commands.is_owner()
