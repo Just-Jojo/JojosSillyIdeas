@@ -52,7 +52,7 @@ class Mayor(commands.Cog):
             return await ctx.send("I'm sorry, you cannot vote at this time.")
         elif await self.config.user(ctx.author).voted():
             return await ctx.send("You already voted!")
-        if not user and user.id != await self.config.current_mayor():
+        if user and user.id != await self.config.current_mayor():
             async with self.config.votes() as votes:
                 try:
                     votes[str(user.id)] += 1
