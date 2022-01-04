@@ -20,7 +20,7 @@ class DamnedHelp(commands.Cog):
         elif message.content != "!help":
             log.info(f"not !help {message.author = }")
             return
-        await ctx.send(
+        await message.channel.send(
             "There is no help for the damned.",
             reference=message.to_reference(fail_if_not_exists=False),
             mention_author=False
