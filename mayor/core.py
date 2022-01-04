@@ -147,11 +147,11 @@ class Mayor(commands.Cog):
     @mayor()
     async def imthemayor(self, ctx: commands.Context):
         """I'm the mayor after all"""
-        quotes = {
+        quotes = [
             "I'd love to talk, but I have matters to attend to. I'm the Mayor after all.",
             "Excuse me, but I'm very busy right now. I'm the Mayor after all.",
             "Far too busy to talk right now. I'm the mayor, after all."
-        }
+        ]
         await ctx.send(choice(quotes))
 
     async def _get_candidates(self, guild: discord.Guild) -> List[int]:
