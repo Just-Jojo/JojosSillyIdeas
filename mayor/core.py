@@ -156,4 +156,4 @@ class Mayor(commands.Cog):
 
     async def _get_candidates(self, guild: discord.Guild) -> List[int]:
         p = await self.config.current_mayor()
-        return [m for m in guild.members if not m.bot and m.id != p]
+        return sorted([m for m in guild.members if not m.bot and m.id != p], key=lambda x: x.name)
