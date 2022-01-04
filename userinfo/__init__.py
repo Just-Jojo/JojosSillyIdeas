@@ -12,6 +12,13 @@ class Userinfo(commands.Cog):
         self.bot = bot
         self._command: Optional[commands.Command] = None
 
+    __version__ = "1.0.0"
+
+    def cog_unload(self) -> None:
+        if self._command:
+            self.bot.remove_command("userinfo")
+            self.bot.add_command(self._command)
+
     @classmethod
     async def init(cls, bot: Red) -> "Userinfo":
         self = cls(bot)
