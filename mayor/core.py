@@ -56,7 +56,7 @@ class Mayor(commands.Cog):
             async with self.config.votes() as votes:
                 try:
                     votes[str(user.id)] += 1
-                except IndexError:
+                except KeyError:
                     votes[str(user.id)] = 1
             await self.config.user(ctx.author).voted.set(True)
             return await ctx.send("Thank you for voting!")
