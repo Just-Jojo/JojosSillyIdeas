@@ -46,7 +46,6 @@ class Mayor(commands.Cog):
         return ctx.guild is not None and ctx.guild.id == 909509066710208523
 
     @commands.command()
-    @can_vote()
     async def vote(self, ctx: commands.Context):
         """Do your duty as a citizen of SMS and vote for your favourite candidate"""
         if not await self.config.open():
@@ -129,6 +128,12 @@ class Mayor(commands.Cog):
 
         for user in await self.config.all_users():
             await self.config.user_from_id(user).voted.clear()
+
+    @commands.command()
+    @commands.is_owner()
+    async def set_mayor(self, ctx: commands.Context, user: discord.Member):
+        await self.config.current_mayor.set(user.id)
+        await ctx.tick()
 
     @commands.command()
     @mayor()
