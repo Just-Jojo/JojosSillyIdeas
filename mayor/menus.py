@@ -129,7 +129,7 @@ class VotingSource(menus.ListPageSource):
 
     async def format_page(self, menu: "Menu", page: List[discord.Member]) -> Union[str, discord.Embed]:
         ctx: commands.Context = menu.ctx
-        data = "\n".join(f"{emojis[i]} {page[i].name}" for i in range(5))
+        data = "\n".join(f"{emojis[i]} {page[i]}" for i in range(5))
         instructions = "Press the emoji of the candidate that you would like to vote for."
         footer = f"Page {menu.current_page + 1}/{self.get_max_pages()}"
         timestamp = get_timestamp()
@@ -168,9 +168,9 @@ class VotingMenu(menus.MenuPages, inherit_buttons=False):
         self.stop()
         async with self.config.votes() as votes:
             try:
-                votes[vote.id] += 1
+                votes[str(vote.id)] += 1
             except KeyError:
-                votes[vote.id] = 1
+                votes[str(vote.id)] = 1
         await self.config.user_from_id(self._author_id).voted.set(True)
         await self.ctx.send("Thank you for voting!")
 

@@ -46,12 +46,20 @@ class Mayor(commands.Cog):
         return ctx.guild is not None and ctx.guild.id == 909509066710208523
 
     @commands.command()
-    async def vote(self, ctx: commands.Context):
+    async def vote(self, ctx: commands.Context, user: discord.Member = None):
         """Do your duty as a citizen of SMS and vote for your favourite candidate"""
         if not await self.config.open():
             return await ctx.send("I'm sorry, you cannot vote at this time.")
         elif await self.config.user(ctx.author).voted():
             return await ctx.send("You already voted!")
+        if not user and user.id != await self.config.current_mayor():
+            async with self.config.votes() as votes:
+                try:
+                    votes[str(user.id)] += 1
+                except IndexError:
+                    votes[str(user.id)] = 1
+            await self.config.user(ctx.author).voted.set(True)
+            return await ctx.send("Thank you for voting!")
         members = await self._get_candidates(ctx.guild)
         await VotingMenu(VotingSource(members), self.config).start(ctx)
 
