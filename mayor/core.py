@@ -28,7 +28,7 @@ _config_structure = {
 
 def mayor() -> CheckDecorator:
     async def pred(ctx: commands.Context) -> bool:
-        return ctx.author.id == await ctx.cog.config.current_mayor()
+        return ctx.author.id == int(await ctx.cog.config.current_mayor())
     return commands.check(pred)
 
 
@@ -77,7 +77,7 @@ class Mayor(commands.Cog):
         """Get the current and previous mayors of SMS"""
         previous = await self.config.previous_mayors()
         c = await self.config.current_mayor()
-        current_mayor = ctx.guild.get_member(c)
+        current_mayor = ctx.guild.get_member(int(c))
         data = f"**Current Mayor:** {current_mayor}"
         if previous:
             data += "\n**Previous Mayors:**\n" + "\n".join(previous)
