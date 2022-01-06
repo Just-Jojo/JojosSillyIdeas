@@ -172,6 +172,7 @@ class VotingMenu(menus.MenuPages, inherit_buttons=False):
             except KeyError:
                 votes[str(vote.id)] = 1
         await self.config.user_from_id(self._author_id).voted.set(True)
+        await self.config.user_from_id(self._author_id).voted_forl.set(vote.id)
         await self.ctx.send("Thank you for voting!")
 
     @property

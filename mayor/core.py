@@ -22,6 +22,8 @@ _config_structure = {
     },
     "user": {
         "voted": False,
+        "joined": False,
+        "voted_for": None, # int the id of the user they voted for
     },
 }
 
@@ -35,7 +37,7 @@ def mayor() -> CheckDecorator:
 class Mayor(commands.Cog):
     """Stuff for a certain server that won't work anywhere else :Kappa:"""
 
-    __version__ = "1.0.0"
+    __version__ = "1.0.1"
 
     def __init__(self, bot: Red):
         self.bot = bot
@@ -50,15 +52,21 @@ class Mayor(commands.Cog):
         """Do your duty as a citizen of SMS and vote for your favourite candidate"""
         if not await self.config.open():
             return await ctx.send("I'm sorry, you cannot vote at this time.")
+        elif await self.config.user(ctx.author).joined():
+            return await ctx.send(
+                "I'm sorry, you joined during voting period "
+                "so I cannot allow you to vote (prevents voter fraud)"
+            )
         elif await self.config.user(ctx.author).voted():
             return await ctx.send("You already voted!")
-        if user and user.id != await self.config.current_mayor():
+        if user and not user.bot and user.id != await self.config.current_mayor():
             async with self.config.votes() as votes:
                 try:
                     votes[str(user.id)] += 1
                 except KeyError:
                     votes[str(user.id)] = 1
             await self.config.user(ctx.author).voted.set(True)
+            await self.config.user(ctx.author).voted_for.set(user.id)
             return await ctx.send("Thank you for voting!")
         members = await self._get_candidates(ctx.guild)
         await VotingMenu(VotingSource(members), self.config).start(ctx)
@@ -137,7 +145,7 @@ class Mayor(commands.Cog):
             await ctx.send("I was unable to add your role, please contact Jojo for your mayor role.")
 
         for user in await self.config.all_users():
-            await self.config.user_from_id(user).voted.clear()
+            await self.config.user_from_id(user).clear()
         await ctx.invoke(self.unlockvote)
         await self.config.votes.clear()
 
@@ -161,3 +169,26 @@ class Mayor(commands.Cog):
     async def _get_candidates(self, guild: discord.Guild) -> List[int]:
         p = await self.config.current_mayor()
         return sorted([m for m in guild.members if not m.bot and m.id != p], key=lambda x: x.name)
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member: discord.Member) -> None:
+        if member.guild.id != 909509066710208523:
+            return
+        if not await self.config.open():
+            return
+        await self.config.user(member).joined.set(True)
+
+    @commands.Cog.listener()
+    async def on_member_leave(self, member: discord.Member) -> None:
+        if member.guild.id != 909509066710208523:
+            return
+        elif not await self.config.open():
+            return
+        elif not (vote := await self.config.user(member).voted_for()):
+            return
+        await self.config.user(member).voted_for.clear()
+        async with self.config.votes() as votes:
+            try:
+                votes[str(vote)] -= 1
+            except KeyError:
+                pass
