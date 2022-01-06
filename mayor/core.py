@@ -28,7 +28,7 @@ _config_structure = {
 
 def mayor() -> CheckDecorator:
     async def pred(ctx: commands.Context) -> bool:
-        return ctx.author.id == await ctx.cog.config.current_mayor()
+        return ctx.author.id == int(await ctx.cog.config.current_mayor())
     return commands.check(pred)
 
 
@@ -77,7 +77,7 @@ class Mayor(commands.Cog):
         """Get the current and previous mayors of SMS"""
         previous = await self.config.previous_mayors()
         c = await self.config.current_mayor()
-        current_mayor = ctx.guild.get_member(c)
+        current_mayor = ctx.guild.get_member(int(c))
         data = f"**Current Mayor:** {current_mayor}"
         if previous:
             data += "\n**Previous Mayors:**\n" + "\n".join(previous)
@@ -90,6 +90,8 @@ class Mayor(commands.Cog):
         data = await self.config.votes()
         if not data:
             return await ctx.send("I'm sorry, no one has voted yet!")
+        elif not await self.config.open():
+            return await ctx.send("Voting is not open!")
 
         old_mayor = ctx.guild.get_member(await self.config.current_mayor())
         async with self.config.previous_mayors() as pm:
@@ -136,6 +138,8 @@ class Mayor(commands.Cog):
 
         for user in await self.config.all_users():
             await self.config.user_from_id(user).voted.clear()
+        await ctx.invoke(self.unlockvote)
+        await self.config.votes.clear()
 
     @commands.command()
     @commands.is_owner()
@@ -147,11 +151,11 @@ class Mayor(commands.Cog):
     @mayor()
     async def imthemayor(self, ctx: commands.Context):
         """I'm the mayor after all"""
-        quotes = {
+        quotes = [
             "I'd love to talk, but I have matters to attend to. I'm the Mayor after all.",
             "Excuse me, but I'm very busy right now. I'm the Mayor after all.",
             "Far too busy to talk right now. I'm the mayor, after all."
-        }
+        ]
         await ctx.send(choice(quotes))
 
     async def _get_candidates(self, guild: discord.Guild) -> List[int]:
