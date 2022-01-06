@@ -27,7 +27,7 @@ class Userinfo(commands.Cog):
 
     @commands.command(name="userinfo")
     @commands.guild_only()
-    async def userinfo(self, ctx: commands.Context, user: discord.Member = None):
+    async def userinfo(self, ctx: commands.Context, *, user: discord.Member = None):
         """Check the info for a user
 
         **Arguments**
