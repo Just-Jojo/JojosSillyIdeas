@@ -36,9 +36,11 @@ class Userinfo(commands.Cog):
 
     def _inject_eject_cmd(self, inject: bool) -> None:
         cmd = userinfo if inject else self._command
-        self.bot.remove_command("userinfo")
+        x = self.bot.remove_command("userinfo")
         if not cmd:
             return
+        if inject:
+            self._command = x
         self.bot.add_command(cmd)
 
     @commands.command()
