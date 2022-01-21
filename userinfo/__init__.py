@@ -26,8 +26,14 @@ class Userinfo(commands.Cog):
         self._command: Optional[commands.Command] = None
         self._toggled: bool = False
         userinfo.cog = self
+        self.bot.loop.create_task(self._init())
 
-    __version__ = "1.0.1"
+    __version__ = "1.0.2"
+    
+    async def _init(self):
+        self._toggled = await self.config.toggled()
+        await self.bot.wait_for_red_ready()
+        self._inject_eject_cmd(self._toggled)
 
     def cog_unload(self) -> None:
         if self._command:
@@ -54,15 +60,7 @@ class Userinfo(commands.Cog):
         await ctx.send(f"{d} the overwritten userinfo command.")
         self._inject_eject_cmd(toggle)
 
-    @classmethod
-    async def init(cls, bot: Red) -> "Userinfo":
-        self = cls(bot)
-        self._toggled = await self.config.toggled()
-        if self._toggled:
-            self._inject_eject_cmd(True)
-        return self
-
 
 async def setup(bot: Red) -> None:
-    c = await Userinfo.init(bot)
+    c = Userinfo(bot)
     bot.add_cog(c)
