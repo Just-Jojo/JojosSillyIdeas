@@ -32,7 +32,7 @@ class Userinfo(commands.Cog):
     
     async def _init(self):
         self._toggled = await self.config.toggled()
-        await self.bot.wait_for_red_ready()
+        await self.bot.wait_until_red_ready()
         self._inject_eject_cmd(self._toggled)
 
     def cog_unload(self) -> None:
