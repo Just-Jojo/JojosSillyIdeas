@@ -106,9 +106,11 @@ class Mayor(commands.Cog):
             pm.append(str(old_mayor))
 
         leaderboard = sorted(data.items(), key=lambda x: x[1], reverse=True)
+        if leaderboard[0] == leaderboard[1]:
+            return await ctx.send("It's a tie tbh")
         data = "\n".join(
             f"{num}. **{ctx.guild.get_member(int(key))}:** {value}"
-            for num, (key, value) in enumerate(leaderboard[:2], 1)
+            for num, (key, value) in enumerate(leaderboard[:3], 1)
         )
         mayor = leaderboard[0]
         timestamp = get_timestamp()
