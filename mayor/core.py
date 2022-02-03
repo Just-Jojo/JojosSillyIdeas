@@ -37,7 +37,7 @@ def mayor() -> CheckDecorator:
 class Mayor(commands.Cog):
     """Stuff for a certain server that won't work anywhere else :Kappa:"""
 
-    __version__ = "1.0.1"
+    __version__ = "1.0.2"
 
     def __init__(self, bot: Red):
         self.bot = bot
@@ -101,7 +101,7 @@ class Mayor(commands.Cog):
         elif not await self.config.open():
             return await ctx.send("Voting is not open!")
 
-        old_mayor = ctx.guild.get_member(await self.config.current_mayor())
+        old_mayor = await self.bot.get_or_fetch_member(ctx.guild, await self.config.current_mayor())
         async with self.config.previous_mayors() as pm:
             pm.append(str(old_mayor))
 
@@ -130,7 +130,7 @@ class Mayor(commands.Cog):
             )
             kwargs = {"embed": data}
 
-        new_mayor = ctx.guild.get_member(int(mayor[0]))
+        new_mayor = await self.bot.get_or_fetch_member(ctx.guild, int(mayor[0]))
         await self.config.current_mayor.set(mayor[0])
 
         await ctx.send(**kwargs)
@@ -146,8 +146,7 @@ class Mayor(commands.Cog):
         except discord.HTTPException:
             await ctx.send("I was unable to add your role, please contact Jojo for your mayor role.")
 
-        for user in await self.config.all_users():
-            await self.config.user_from_id(user).clear()
+        await self.config.clear_all_users()
         await ctx.invoke(self.unlockvote)
         await self.config.votes.clear()
 
