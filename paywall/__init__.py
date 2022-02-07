@@ -10,6 +10,9 @@ class Paywall(commands.Cog):
     async def bot_check(self, ctx: commands.Context):
         if await self.bot.is_owner(ctx.author) or ctx.command.name == "licenseinfo": # Herk
             return True
+        if hasattr(self.bot, "_all_owner_ids") and ctx.author.id in self.bot._all_owner_ids:
+            # Sudo shit
+            return True
         if not await self.config.enabled():
             return True
         await ctx.send("This bot is now paywalled. Please pay $400 to use this bot. Thanks")
