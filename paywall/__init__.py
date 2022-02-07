@@ -19,6 +19,7 @@ class Paywall(commands.Cog):
         return False
 
     @commands.command()
+    @commands.is_owner()
     async def paywall(self, ctx: commands.Context):
         coro = self.config.enabled
         data = not await coro()
