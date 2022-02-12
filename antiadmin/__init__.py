@@ -12,12 +12,12 @@ class AntiAdmin(commands.Cog):
     """Stop fucking idiots who give you admin permissions"""
 
     __authors__ = "Jojo#7791"
-    __version__ = "1.0.2"
+    __version__ = "1.0.3"
 
     def __init__(self, bot: Red):
         self.bot = bot
         self.config = Config.get_conf(self, 544974305445019651, True)
-        self.config.register_global(ignore_messages=True)
+        self.config.register_global(ignore_messages=True, whitelist=[])
 
     async def red_delete_data_for_user(self, *args, **kwargs):
         return
@@ -38,12 +38,41 @@ class AntiAdmin(commands.Cog):
     async def antiadminset(self, ctx: commands.Context):
         """Manage the settings for the anti admin cog"""
 
+    @commands.is_owner()
+    @commands.group(name="antiadminwhitelist", aliases=["aawl"])
+    async def anti_admin_whitelist(self, ctx: commands.Context):
+        """Manage the whitelist for antiadmin"""
+
+    @anti_admin_whitelist.command(name="add")
+    async def whitelist_add(self, ctx: commands.Context, guild: discord.Guild):
+        """Add a guild to the whitelist"""
+        gid = str(guild.id)
+        async with self.config.whitelist() as whitelist:
+            if gid in whitelist:
+                return await ctx.send("That server is already whitelisted")
+            whitelist.append(gid)
+        await ctx.tick()
+
+    @anti_admin_whitelist.command(name="remove")
+    async def whitelist_remove(self, ctx: commands.Context, guild_id: discord.Object):
+        gid = str(guild_id.id)
+        async with self.config.whitelist() as whitelist:
+            if gid not in whitelist:
+                return await ctx.send("That server is not whitelisted")
+            whitelist.remove(gid)
+        await ctx.tick()
+
+    @anti_admin_whitelist.command(name="list")
+    async def whitelist_list(self, ctx: commands.Context):
+        """View the whitelisted guilds for anti admin"""
+
     @antiadminset.command(name="ignore")
     async def anti_admin_ignore(self, ctx: commands.Context, toggle: bool):
         """Set whether the cog should ignore a server if it has administrator permissions"""
         now_no_longer = "now" if toggle else "no longer"
         await ctx.send(f"Guilds that I have adminstrator permissions in will {now_no_longer} be ignored.")
 
+    @commands.is_owner()
     @commands.command(name="antiadminview", aliases=["aav"])
     async def anti_admin_view(self, ctx: commands.Context):
         """Show the guilds that I have administrator permissions in"""
@@ -60,6 +89,9 @@ class AntiAdmin(commands.Cog):
         await self._handle_guild(guild)
 
     async def _handle_guild(self, guild: discord.Guild):
+        # This message is sponsored by [REDACTED]
+        if str(guild.id) in await self.config.whitelist():
+            return
         message = "Please, don't give me admin permissions. What if my dev was evil and destroyed your server?"
         try:
             await guild.owner.send(message)
@@ -86,6 +118,8 @@ class AntiAdmin(commands.Cog):
         if await self.bot.is_owner(ctx.author):
             return True
         if not await self.config.ignore_messages():
+            return True
+        if str(ctx.guild.id) in await self.config.whitelist():
             return True
         return not ctx.me.guild_permissions.administrator
 
