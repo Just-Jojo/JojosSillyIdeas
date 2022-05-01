@@ -36,6 +36,8 @@ class MCOC(commands.Cog):
     @mcoc.command(name="champ")
     async def mcoc_champ(self, ctx: commands.Context, tier: Optional[int], rank: Optional[int], *, champion: str):
         """Get champion info fr"""
+
+        champion = champion.lower()
         try:
             data = await self.client.get_champ(champion, tier or 6, rank or 3)
         except uma.ChampionException as e:
@@ -78,6 +80,7 @@ class MCOC(commands.Cog):
     @mcoc.command(name="node")
     async def mcoc_node(self, ctx: commands.Context, node: int):
         """Get info about a node from mcoc"""
+
         # TODO Find a way to query the api for a node name
         try:
             data = await self.client.get_node(node)
