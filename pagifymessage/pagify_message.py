@@ -68,7 +68,6 @@ class PagifyMessage(commands.Cog):
         self.config = Config.get_conf(self, 544974305445019651, True)
         self.config.register_global(enabled=False)
         self._enabled: bool = False
-        self.init_task: asyncio.Task = self.bot.loop.create_task(self.init())
 
     def format_help_for_context(self, ctx: commands.Context):
         plural = "" if len(self.__authors__) == 1 else "s"
@@ -79,11 +78,10 @@ class PagifyMessage(commands.Cog):
         )
 
     def cog_unload(self) -> None:
-        self.init_task.cancel()
         if self._enabled:
             setattr(discord.abc.Messageable, "send", _OG_FUNC)
 
-    async def init(self) -> None:
+    async def cog_load(self) -> None:
         self._enabled = await self.config.enabled()
 
         if self._enabled:

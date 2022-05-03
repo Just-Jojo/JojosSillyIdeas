@@ -25,5 +25,5 @@ class DamnedHelp(commands.Cog):
         )
 
 
-def setup(bot):
-    bot.add_cog(DamnedHelp())
+async def setup(bot):
+    await bot.add_cog(DamnedHelp())

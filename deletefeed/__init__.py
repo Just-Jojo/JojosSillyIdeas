@@ -92,7 +92,7 @@ class DeleteFeed(commands.Cog):
             )
             embed.set_author(
                 name=f"{cached_message.author} ({cached_message.author.id})",
-                icon_url=cached_message.author.avatar_url
+                icon_url=getattr(cached_message.author.avatar, "url", cached_message.author.default_avatar)
             )
             kwargs = {"embed": embed}
         try:
@@ -101,5 +101,5 @@ class DeleteFeed(commands.Cog):
             log.debug("Could not log deleted message", exc_info=e)
 
 
-def setup(bot: Red):
-    bot.add_cog(DeleteFeed(bot))
+async def setup(bot: Red):
+    await bot.add_cog(DeleteFeed(bot))

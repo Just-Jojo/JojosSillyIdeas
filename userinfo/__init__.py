@@ -26,11 +26,10 @@ class Userinfo(commands.Cog):
         self._command: Optional[commands.Command] = None
         self._toggled: bool = False
         userinfo.cog = self
-        self.bot.loop.create_task(self._init())
 
     __version__ = "1.0.2"
     
-    async def _init(self):
+    async def cog_load(self):
         self._toggled = await self.config.toggled()
         await self.bot.wait_until_red_ready()
         self._inject_eject_cmd(self._toggled)
@@ -62,5 +61,4 @@ class Userinfo(commands.Cog):
 
 
 async def setup(bot: Red) -> None:
-    c = Userinfo(bot)
-    bot.add_cog(c)
+    await bot.add_cog(Userinfo(bot))

@@ -15,10 +15,9 @@ class Perhaps(commands.Cog):
         self.bot = bot
         self.config = Config.get_conf(self, 544974305445019651, True)
         self.config.register_global(enabled=False)
-        self.bot.loop.create_task(self._init())
         self._command: Optional[commands.Command] = None
 
-    async def _init(self):
+    async def cog_load(self):
         self._inject_eject_cmd(await self.config.enabled())
 
     def _inject_eject_cmd(self, state: bool) -> None:
@@ -41,5 +40,5 @@ class Perhaps(commands.Cog):
         self._inject_eject_cmd(d)
 
 
-def setup(bot: Red):
-    bot.add_cog(Perhaps(bot))
+async def setup(bot: Red):
+    await bot.add_cog(Perhaps(bot))

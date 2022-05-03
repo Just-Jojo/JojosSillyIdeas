@@ -26,8 +26,8 @@ class MCOC(commands.Cog):
         self.bot = bot
         self.client = uma.UMAClient(self.bot.loop)
 
-    def cog_unload(self) -> None:
-        self.bot.loop.create_task(self.client.close())
+    async def cog_unload(self) -> None:
+        await self.client.close()
 
     @commands.group()
     async def mcoc(self, ctx: commands.Context):
@@ -99,5 +99,5 @@ class MCOC(commands.Cog):
         await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(MCOC(bot))
+async def setup(bot):
+    await bot.add_cog(MCOC(bot))

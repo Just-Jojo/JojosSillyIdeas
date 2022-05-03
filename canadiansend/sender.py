@@ -36,13 +36,11 @@ class CanadianSend(commands.Cog):
         self.bot = bot
         self.config = Config.get_conf(self, 544974305445019651, True)
         self.config.register_global(enabled=False)
-        self.task = self.bot.loop.create_task(self._startup())
 
     def cog_unload(self):
         self._monkey_patch(False)
-        self.task.cancel()
 
-    async def _startup(self):
+    async def cog_load(self):
         if await self.config.enabled():
             self._monkey_patch(True)
 

@@ -9,5 +9,6 @@ class Throwaway(commands.Cog):
         await ctx.send(f"{x + y % 2 = }")
 
 
-def setup(bot):
-    bot.add_cog(Throwaway())
+async def setup(bot):
+    # I'm updating this cog because I will *totally* use it later on
+    await bot.add_cog(Throwaway())

@@ -28,5 +28,5 @@ class Paywall(commands.Cog):
         await coro.set(data)
 
 
-def setup(bot):
-    bot.add_cog(Paywall(bot))
+async def setup(bot):
+    await bot.add_cog(Paywall(bot))
