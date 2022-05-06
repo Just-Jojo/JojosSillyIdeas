@@ -72,12 +72,13 @@ class DeleteFeed(commands.Cog):
         if not channel:
             return
         now = datetime.datetime.now(tz=datetime.timezone.utc)
+        content = f"`{c}`." if (c := cached_message.content) else "No content."
         kwargs = {
             "content": (
                 f"**Message deleted by {cached_message.author} ({cached_message.author.id}).**\n"
                 f"Message deleted <t:{int(now.timestamp())}> in channel "
                 f"{cached_message.channel.mention} ({cached_message.channel.id})\n"
-                f"\n**Message content:** `{cached_message.content}`"
+                f"\n**Message content:** {content}"
             )
         }
         if await self.bot.embed_requested(channel, ...):
@@ -85,7 +86,7 @@ class DeleteFeed(commands.Cog):
                 title=f"Message deleted by {cached_message.author} ({cached_message.author.id}).",
                 description=(
                     f"Channel: {cached_message.channel.mention} ({cached_message.channel.id})\n"
-                    f"Content: `{cached_message.content}`."
+                    f"Content: {content}"
                 ),
                 colour=await self.bot.get_embed_colour(channel),
                 timestamp=now,
