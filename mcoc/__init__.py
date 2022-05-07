@@ -39,7 +39,7 @@ class MCOC(commands.Cog):
 
         champion = champion.lower()
         try:
-            data = await self.client.get_champ(champion, tier or 6, rank or 3)
+            data = await self.client.get_champ(champion, tier=tier or 6, rank=rank or 3)
         except uma.ChampionException as e:
             if e.args:
                 return await ctx.send(e.args[0])
