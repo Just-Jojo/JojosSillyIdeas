@@ -68,7 +68,7 @@ class MCOC(commands.Cog):
             description=description,
             timestamp=datetime.datetime.now(datetime.timezone.utc),
         ).set_author(name=name, url=data.url_page).add_field(
-            name="Sig Info", value=si if isinstance((si := data.sig_info), str) else si[-1],
+            name="Sig Info", value=si if isinstance((si := data.sig_info), str) else ("No sig information" if not si else si[-1]),
         ).add_field(
             name="Tags", value=", ".join(data.tags)
         ).add_field(
