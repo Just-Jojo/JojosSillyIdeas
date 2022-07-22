@@ -1,0 +1,17 @@
+{
+    "name": "licenseinforemover",
+    "short": "Become the scallywag that you've always wanted to be by removing `licenseinfo` (and getting sued for not having it)",
+    "description": "Become the scallywag that you've always wanted to be by removing `licenseinfo` (and getting sued for not having it)",
+    "end_user_data_statement": "This cog does not store end user data.",
+    "install_msg": "Oy, oy, what's this I 'ear about you not 'aving a liocense on yer Red bot, eh?",
+    "author": [
+        "Jojo#7791"
+    ],
+    "required_cogs": {},
+    "requirements": [],
+    "tags": [],
+    "min_bot_version": "3.4.6",
+    "hidden": false,
+    "disabled": false,
+    "type": "COG"
+}
