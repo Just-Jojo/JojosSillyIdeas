@@ -16,5 +16,5 @@ class LicenseInfoRemover(commands.Cog):
         await ctx.send("That wasn't a pleaaaaase!")
 
 
-def setup(bot: Red) -> None:
-    bot.add_cog(LicenseInfoRemover())
+async def setup(bot: Red) -> None:
+    await bot.add_cog(LicenseInfoRemover())
