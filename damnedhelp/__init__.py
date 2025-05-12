@@ -1,10 +1,8 @@
 from redbot.core import commands
 import discord
 
-import logging
 import asyncio
 
-log = logging.getLogger("red.sillyideas.damnedhelp")
 
 class DamnedHelp(commands.Cog):
     @commands.Cog.listener()
@@ -25,5 +23,5 @@ class DamnedHelp(commands.Cog):
         )
 
 
-def setup(bot):
-    bot.add_cog(DamnedHelp())
+async def setup(bot):
+    await bot.add_cog(DamnedHelp())

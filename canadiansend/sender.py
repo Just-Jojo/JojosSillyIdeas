@@ -1,6 +1,9 @@
+from __future__ import annotations
+
+from functools import wraps
+
 import discord
 from discord.abc import Messageable
-from discord.utils import copy_doc
 from redbot.core import commands, Config
 from redbot.core.bot import Red
 
@@ -9,7 +12,7 @@ import string
 old_func = Messageable.send
 
 
-@copy_doc(old_func)
+@wraps(old_func)
 async def send(
     self: Messageable,
     content: str = None,
@@ -36,13 +39,11 @@ class CanadianSend(commands.Cog):
         self.bot = bot
         self.config = Config.get_conf(self, 544974305445019651, True)
         self.config.register_global(enabled=False)
-        self.task = self.bot.loop.create_task(self._startup())
 
-    def cog_unload(self):
+    def cog_unload(self) -> None:
         self._monkey_patch(False)
-        self.task.cancel()
 
-    async def _startup(self):
+    async def cog_load(self) -> None:
         if await self.config.enabled():
             self._monkey_patch(True)
 
@@ -50,23 +51,23 @@ class CanadianSend(commands.Cog):
         return await self.bot.is_owner(ctx.author)
 
     @commands.group(name="canadiansend", aliases=("cs",))
-    async def canadian_send(self, ctx: commands.Context):
+    async def canadian_send(self, ctx: commands.Context) -> None:
         """Manage canadian settings"""
-        ...
+        pass
 
     @canadian_send.command(name="enable")
-    async def canadian_send_enable(self, ctx: commands.Context):
+    async def canadian_send_enable(self, ctx: commands.Context) -> None:
         """Enable canadian send"""
         self._monkey_patch(True)
         await ctx.send("Canadian send is now enabled")
 
     @canadian_send.command(name="disable")
-    async def canadian_send_disable(self, ctx: commands.Context):
+    async def canadian_send_disable(self, ctx: commands.Context) -> None:
         """Disable canadian send"""
         self._monkey_patch(False)
         await ctx.send("Canadian send is now disabled")
 
-    def _monkey_patch(self, patch: bool):
+    def _monkey_patch(self, patch: bool) -> None:
         func = old_func
         if patch:
             func = send

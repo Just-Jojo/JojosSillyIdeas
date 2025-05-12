@@ -7,7 +7,7 @@ from redbot.core import commands, Config
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import pagify, humanize_list as hl, box
 import discord
-from discord.utils import copy_doc
+from functools import wraps as copy_doc
 
 
 _OG_FUNC = getattr(discord.abc.Messageable, "send")
@@ -79,11 +79,10 @@ class PagifyMessage(commands.Cog):
         )
 
     def cog_unload(self) -> None:
-        self.init_task.cancel()
         if self._enabled:
             setattr(discord.abc.Messageable, "send", _OG_FUNC)
 
-    async def init(self) -> None:
+    async def cog_load(self) -> None:
         self._enabled = await self.config.enabled()
 
         if self._enabled:
